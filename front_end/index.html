@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Catalog</title>
+    <style>
+        .category {
+            cursor: pointer;
+        }
+
+        .course {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Course Catalog</h1>
+    <div id="categories"></div>
+    <div id="courses"></div>
+
+    <script>
+        const apiUrl = 'http://api.cc.localhost';
+
+        // // Fetch categories and handle any API errors
+        // async function fetchCategories() {
+        //     try {
+        //         const response = await fetch(`${apiUrl}/categories`);
+        //         if (!response.ok) throw new Error('Failed to fetch categories');
+        //         const categories = await response.json();
+        //         renderCategories(categories);
+        //     } catch (error) {
+        //         console.error('Error fetching categories:', error);
+        //     }
+        // }
+
+        // // Fetch courses based on category, or fetch all if no category
+        // async function fetchCourses(categoryId = null) {
+        //     try {
+        //         const url = categoryId
+        //             ? `${apiUrl}/courses?category=${encodeURIComponent(categoryId)}`
+        //             : `${apiUrl}/courses`; // Fetch all if no category
+        //         const response = await fetch(url);
+        //         if (!response.ok) throw new Error('Failed to fetch courses');
+        //         const courses = await response.json();
+        //         renderCourses(courses);
+        //     } catch (error) {
+        //         console.error('Error fetching courses:', error);
+        //     }
+        // }
+
+        async function fetchCategories() {
+                try {
+                    const response = await fetch(`${apiUrl}/categories`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // Include any necessary headers, like Authorization
+                        },
+                        mode: 'cors' // Ensure CORS is used
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch categories');
+                    const categories = await response.json();
+                    renderCategories(categories);
+                } catch (error) {
+                    console.error('CORS or API error fetching categories:', error);
+                    alert('There was an error fetching categories. Please check your API server configuration.');
+                }
+            }
+
+        async function fetchCourses(categoryId = null) {
+                try {
+                    const url = categoryId
+                        ? `${apiUrl}/courses?category=${encodeURIComponent(categoryId)}`
+                        : `${apiUrl}/courses`;
+                    const response = await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors' // Ensures the request is handled as CORS
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch courses');
+                    const courses = await response.json();
+                    renderCourses(courses);
+                } catch (error) {
+                    console.error('CORS or API error fetching courses:', error);
+                    alert('There was an error fetching courses. Please check your API server configuration.');
+                }
+            }
+
+
+        // Render categories to the page
+        function renderCategories(categories) {
+            const container = document.getElementById('categories');
+            container.innerHTML = categories.map(cat => `
+                <div class="category" onclick="fetchCourses('${cat.id}')">
+                    ${cat.name} (${cat.course_count})
+                </div>
+            `).join('');
+        }
+
+        // Render courses to the page
+        function renderCourses(courses) {
+            const container = document.getElementById('courses');
+            container.innerHTML = courses.map(course => `
+                <div class="course">
+                    <h2>${course.name}</h2>
+                    <p>${course.description}</p>
+                    <small>Category: ${course.main_category}</small>
+                </div>
+            `).join('');
+        }
+
+        // Initial fetch for categories and courses (with no category)
+        fetchCategories();
+        fetchCourses();
+    </script>
+</body>
+
+</html>
