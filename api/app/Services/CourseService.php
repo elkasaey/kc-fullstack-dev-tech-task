@@ -9,7 +9,7 @@ class CourseService
     public function getAll($categoryId = null)
     {
         $query = "
-            SELECT courses.id, courses.name, courses.description, categories.name AS main_category
+            SELECT courses.id, courses.name, courses.description,courses.image_preview, categories.name AS main_category 
             FROM courses
             INNER JOIN categories ON courses.category_id = categories.id
         ";

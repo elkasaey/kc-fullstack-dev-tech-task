@@ -4,22 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Catalog</title>
-    <style>
-        .category {
-            cursor: pointer;
-        }
-
-        .course {
-            margin: 10px 0;
-        }
-    </style>
+    <!-- Link to the external CSS file -->
+    <title>Course catalog</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <h1>Course Catalog</h1>
-    <div id="categories"></div>
-    <div id="courses"></div>
+    <div class="pageBody">
+        <div class="sideBar" id="categories">
+        </div>
+        <div id="courses" class="cardsList">
+
+        </div>
+    </div>
+
 
     <script>
         const apiUrl = 'http://api.cc.localhost';
@@ -51,24 +50,79 @@
         //     }
         // }
 
+        // async function fetchCategories() {
+        //         try {
+        //             const response = await fetch(`${apiUrl}/categories`, {
+        //                 method: 'GET',
+        //                 headers: {
+        //                     'Content-Type': 'application/json',
+        //                     // Include any necessary headers, like Authorization
+        //                 },
+        //                 mode: 'cors' // Ensure CORS is used
+        //             });
+        //             if (!response.ok) throw new Error('Failed to fetch categories');
+        //             const categories = await response.json();
+        //             renderCategories(categories);
+        //         } catch (error) {
+        //             console.error('CORS or API error fetching categories:', error);
+        //             alert('There was an error fetching categories. Please check your API server configuration.');
+        //         }
+        //     }
+
         async function fetchCategories() {
                 try {
-                    const response = await fetch(`${apiUrl}/categories`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            // Include any necessary headers, like Authorization
-                        },
-                        mode: 'cors' // Ensure CORS is used
-                    });
-                    if (!response.ok) throw new Error('Failed to fetch categories');
+                    const response = await fetch(`${apiUrl}/categories`);
                     const categories = await response.json();
-                    renderCategories(categories);
+                    const nestedCategories = buildHierarchy(categories);
+                    renderCategories(nestedCategories);
                 } catch (error) {
-                    console.error('CORS or API error fetching categories:', error);
-                    alert('There was an error fetching categories. Please check your API server configuration.');
+                    console.error('Error fetching categories:', error);
                 }
             }
+
+            function buildHierarchy(categories) {
+                const categoryMap = {};
+                const roots = [];
+
+                // Map categories by ID
+                categories.forEach(cat => {
+                    categoryMap[cat.id] = { ...cat, children: [] };
+                });
+
+                // Build hierarchy
+                categories.forEach(cat => {
+                    if (cat.parent_id) {
+                        categoryMap[cat.parent_id]?.children.push(categoryMap[cat.id]);
+                    } else {
+                        roots.push(categoryMap[cat.id]);
+                    }
+                });
+
+                return roots;
+            }
+
+            function renderCategories(categories, container = document.getElementById('categories'), level = 0) {
+                const ul = document.createElement('ul');
+                ul.style.marginLeft = `${level * 20}px`;
+
+                categories.forEach(cat => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                    ${cat.name} 
+                    ${cat.course_count ? `<span class="course-count">(${cat.course_count})</span>` : ''}
+                `;
+                    li.classList.add('category');
+
+                    if (cat.children.length > 0) {
+                        renderCategories(cat.children, li, level + 1);
+                    }
+
+                    ul.appendChild(li);
+                });
+
+                container.appendChild(ul);
+            }
+
 
         async function fetchCourses(categoryId = null) {
                 try {
@@ -93,23 +147,24 @@
 
 
         // Render categories to the page
-        function renderCategories(categories) {
-            const container = document.getElementById('categories');
-            container.innerHTML = categories.map(cat => `
-                <div class="category" onclick="fetchCourses('${cat.id}')">
-                    ${cat.name} (${cat.course_count})
-                </div>
-            `).join('');
-        }
+        // function renderCategories(categories) {
+        //     const container = document.getElementById('categories');
+        //     container.innerHTML = categories.map(cat => `
+        //         <li onclick="fetchCourses('${cat.id}')">
+        //             ${cat.name} (${cat.course_count})
+        //         </li>
+        //     `).join('');
+        // }
 
         // Render courses to the page
         function renderCourses(courses) {
             const container = document.getElementById('courses');
             container.innerHTML = courses.map(course => `
-                <div class="course">
-                    <h2>${course.name}</h2>
+                <div class="cards">
+	                <img src="${course.image_preview}" class="courseImage" alt="CourseImage"/>
+                    <h6>${course.name}</h6>
                     <p>${course.description}</p>
-                    <small>Category: ${course.main_category}</small>
+                    <span class="courseCategory">${course.main_category}</span>
                 </div>
             `).join('');
         }

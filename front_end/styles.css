@@ -1,0 +1,127 @@
+/* styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #dedddd;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #333;
+	font-weight: 900;
+    text-align: center;
+}
+
+p {
+    color: #555;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.pageBody{
+	display: flex;
+	justify-content: space-between;
+}
+
+.sideBar{
+	width:30%;	
+}
+
+ul{ 
+	list-style-type: none;
+	font-size: 12px;
+	font-weight: 600;
+	margin: 0;
+	padding: 0;
+}
+
+li{
+	cursor: pointer;
+	transition: transform 0.3s ease; 
+}
+
+li:hover {
+    transform: scale(1.05);
+}
+
+.cardsList{
+	width: 70%;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+}
+
+.cards{
+	display:flex;
+	flex-direction: column;
+	width: 25%;
+	background-color: #fff;
+	border-radius: 8px;
+	min-height: 250px;
+	overflow: hidden;
+	box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+	position: relative;
+}
+
+.cards p {
+      display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical; 
+	overflow-wrap: break-word;
+	text-wrap: wrap;
+    font-size: 14px; 
+    line-height: 1.5;
+    color: #333;
+	padding-inline: 4px;
+	margin-bottom: 0;
+}
+.cards h6 {
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	white-space: no-wrap;
+	width: 200px;
+	-webkit-box-orient: vertical;
+	text-overflow: ellipsis;
+	overflow-wrap: break-word;
+	margin: 0;
+	padding : 8px 0px 8px 8px;
+}
+
+.courseImage{
+	width:100%;
+	height: auto;
+	border-radius: 8px 8px 0 0;
+}
+
+.courseCategory {
+	position: absolute;
+	top: 2px;
+	padding: 2px;
+	box-shadow: 0 8px 8px rgba(0, 0, 0, 0.1);
+	right: 2px;
+	border-radius: 4px;
+	background-color: rgba(242, 247, 248, 0.8);
+}
+
+@media screen and (max-width: 768px) {
+	ul{
+		padding: 0;
+
+	}
+	
+    .cards {
+        width: 100%;
+    }
+
+    .cardsList {
+        gap: 16px; 
+    }
+	
+	  .cards h6 {
+        display: block;
+		width: 100%;
+        -webkit-line-clamp: unset;
+        overflow: visible;
+        text-overflow: unset;
+    }
+}
